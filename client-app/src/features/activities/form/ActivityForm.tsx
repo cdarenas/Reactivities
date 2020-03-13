@@ -42,7 +42,7 @@ const ActivityForm: React.FC<IProps> = ({ setEditMode, activity: initialFormStat
                 ...activity,
                 id: uuid()
             }
-            createActivity(activity);
+            createActivity(newActivity);
         } else {
             editActivity(activity);
         }
