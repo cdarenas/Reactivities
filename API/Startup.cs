@@ -5,9 +5,11 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.EntityFrameworkCore;
+using FluentValidation.AspNetCore;
 using Persistence;
 using MediatR;
 using Application.Activities;
+using API.Middleware;
 
 namespace API
 {
@@ -38,17 +40,26 @@ namespace API
             services.AddMvc(opt =>
             {
                 opt.EnableEndpointRouting = false;
-            }).SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
+            }).AddFluentValidation(cfg => cfg.RegisterValidatorsFromAssemblyContaining<Create>())
+            .SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            app.UseMiddleware<ErrorHandlingMiddleware>();
+
             if (env.IsDevelopment())
             {
-                app.UseDeveloperExceptionPage();
+                // app.UseDeveloperExceptionPage();
+            }
+            else
+            {
+                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+                // app.UseHsts();
             }
 
+            // app.UseHttpsRedirection();
             app.UseCors("CorsPolicy");
             app.UseMvc();
         }
