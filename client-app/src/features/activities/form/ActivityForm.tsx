@@ -9,9 +9,9 @@ import TextInput from '../../../app/common/form/TextInput'
 import TextAreaInput from '../../../app/common/form/TextAreaInput'
 import SelectInput from '../../../app/common/form/SelectInput';
 import { category } from '../../../app/common/options/categoryOptions';
-import { DateTimePicker } from 'react-widgets';
 import { combineValidators, isRequired, composeValidators, hasLengthGreaterThan } from 'revalidate';
 import { RootStoreContext } from '../../../app/stores/rootStore';
+import DateInput from '../../../app/common/form/DateInput';
 
 const validate = combineValidators({
     title: isRequired({ message: 'The event title is required' }),
@@ -98,15 +98,13 @@ const ActivityForm: React.FC<RouteComponentProps<DetailParams>> = ({
                                     name='category'
                                     placeholder='Category'
                                     value={activity.category}
-                                />
-                                <DateTimePicker
+                                /><Field
+                                    component={DateInput}
                                     name='date'
                                     value={activity.date}
                                     placeholder='Date'
                                     date={true}
                                     time={true}
-                                    onChange={value => activity.date = value!}
-                                    onKeyDown={(e) => e.preventDefault()}
                                 />
                                 <br></br>
                                 <Field

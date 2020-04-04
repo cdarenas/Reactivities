@@ -11,33 +11,50 @@ import ActivityDetails from '../../features/activities/details/ActivityDetails';
 import NotFound from './NotFound';
 import { ToastContainer } from 'react-toastify';
 import { RootStoreContext } from '../../app/stores/rootStore';
+import LoginForm from '../../features/user/LoginForm';
+import ModalContainer from '../common/modals/ModalContainer';
 
 const App: React.FC<RouteComponentProps> = ({ location }) => {
   const rootStore = useContext(RootStoreContext);
+  const { setAppLoaded, token, appLoaded } = rootStore.commonStore;
+  const { getUser } = rootStore.userStore;
 
   useEffect(() => {
-    rootStore.activityStore.loadActivities();
-  }, [rootStore.activityStore]);
+    if (token) {
+      getUser().finally(() => setAppLoaded())
+    } else {
+      setAppLoaded();
+    }
+  }, [getUser, setAppLoaded, token])
 
-  if (rootStore.activityStore.loadingInitial) return <LoadingComponent content='Loading Hacktivities...'></LoadingComponent>
+  if (!appLoaded) return <LoadingComponent content='Loading app...' />
 
   return (
     <Fragment>
-      <ToastContainer position='bottom-right'></ToastContainer>
+      <ModalContainer />
+      <ToastContainer position='bottom-right' />
       <Route exact path='/' component={HomePage} />
-      <Route path={'/(.+)'} render={() => (
-        <Fragment>
-          <NavBar></NavBar>
-          <Container style={{ marginTop: '7em' }}>
-            <Switch>
-              <Route exact path='/activities' component={ActivityDashboard}></Route>
-              <Route path='/activities/:id' component={ActivityDetails}></Route>
-              <Route key={location.key} path={['/createActivity', '/manage/:id']} component={ActivityForm}></Route>
-              <Route component={NotFound}></Route>
-            </Switch>
-          </Container>
-        </Fragment>
-      )} />
+      <Route
+        path={'/(.+)'}
+        render={() => (
+          <Fragment>
+            <NavBar />
+            <Container style={{ marginTop: '7em' }}>
+              <Switch>
+                <Route exact path='/activities' component={ActivityDashboard} />
+                <Route path='/activities/:id' component={ActivityDetails} />
+                <Route
+                  key={location.key}
+                  path={['/createActivity', '/manage/:id']}
+                  component={ActivityForm}
+                />
+                <Route path='/login' component={LoginForm} />
+                <Route component={NotFound} />
+              </Switch>
+            </Container>
+          </Fragment>
+        )}
+      />
     </Fragment>
   );
 };
