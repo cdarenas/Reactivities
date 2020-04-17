@@ -12,6 +12,7 @@ import { category } from '../../../app/common/options/categoryOptions';
 import { combineValidators, isRequired, composeValidators, hasLengthGreaterThan } from 'revalidate';
 import { RootStoreContext } from '../../../app/stores/rootStore';
 import DateInput from '../../../app/common/form/DateInput';
+import { combineDateAndTime } from '../../../app/common/util/util';
 
 const validate = combineValidators({
     title: isRequired({ message: 'The event title is required' }),
@@ -24,7 +25,8 @@ const validate = combineValidators({
     )(),
     city: isRequired('City'),
     venue: isRequired('Venue'),
-    date: isRequired('Date')
+    date: isRequired('Date'),
+    time: isRequired('Time')
 });
 
 interface DetailParams {
@@ -58,7 +60,9 @@ const ActivityForm: React.FC<RouteComponentProps<DetailParams>> = ({
     }, [loadActivity, match.params.id]);
 
     const handleFinalFormSubmit = (values: any) => {
-        const { ...activity } = values;
+        const dateAndTime = combineDateAndTime(values.date, values.time);
+        const { date, time, ...activity } = values;
+        activity.date = dateAndTime;
         if (!activity.id) {
             let newActivity = {
                 ...activity,
@@ -74,7 +78,8 @@ const ActivityForm: React.FC<RouteComponentProps<DetailParams>> = ({
         <Grid>
             <Grid.Column width={10}>
                 <Segment clearing>
-                    <FinalForm validate={validate}
+                    <FinalForm
+                        validate={validate}
                         initialValues={activity}
                         onSubmit={handleFinalFormSubmit}
                         render={({ handleSubmit, invalid, pristine }) => (
@@ -98,15 +103,24 @@ const ActivityForm: React.FC<RouteComponentProps<DetailParams>> = ({
                                     name='category'
                                     placeholder='Category'
                                     value={activity.category}
-                                /><Field
-                                    component={DateInput}
-                                    name='date'
-                                    value={activity.date}
-                                    placeholder='Date'
-                                    date={true}
-                                    time={true}
                                 />
-                                <br></br>
+                                <Form.Group widths='equal'>
+                                    <Field
+                                        component={DateInput}
+                                        name='date'
+                                        date={true}
+                                        placeholder='Date'
+                                        value={activity.date}
+                                    />
+                                    <Field
+                                        component={DateInput}
+                                        name='time'
+                                        time={true}
+                                        placeholder='Time'
+                                        value={activity.time}
+                                    />
+                                </Form.Group>
+
                                 <Field
                                     component={TextInput}
                                     name='city'

@@ -11,12 +11,17 @@ const NavBar: React.FC = () => {
         <Menu fixed='top' inverted>
             <Container>
                 <Menu.Item header as={NavLink} exact to='/'>
-                    <img src="/assets/hacking.png" alt="logo" style={{ marginRight: '10px' }}></img>
-                    Hacktivities
-                </Menu.Item>
-                <Menu.Item name='Hacktivities' as={NavLink} to='/activities' />
+                    <img src='/assets/hacking.png' alt='logo' style={{ marginRight: 10 }} />
+            Reactivities
+          </Menu.Item>
+                <Menu.Item name='Activities' as={NavLink} to='/activities' />
                 <Menu.Item>
-                    <Button as={NavLink} to='/createActivity' positive content='Create Hacktivity'></Button>
+                    <Button
+                        as={NavLink}
+                        to='/createActivity'
+                        positive
+                        content='Create Activity'
+                    />
                 </Menu.Item>
                 {user && (
                     <Menu.Item position='right'>
@@ -25,7 +30,7 @@ const NavBar: React.FC = () => {
                             <Dropdown.Menu>
                                 <Dropdown.Item
                                     as={Link}
-                                    to={`/profile/username`}
+                                    to={`/profile/${user.username}`}
                                     text='My profile'
                                     icon='user'
                                 />
@@ -36,7 +41,7 @@ const NavBar: React.FC = () => {
                 )}
             </Container>
         </Menu>
-    )
-}
+    );
+};
 
-export default observer(NavBar)
+export default observer(NavBar);
